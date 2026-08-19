@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import CategoryBadge from '../../../components/CategoryBadge.astro';
+import { getAllPublished, slugOf, langOf, type Post } from '../../../lib/posts';
+import type { Lang } from '../../../consts';
+import type { CategorySlug } from '../../../categories';
+import { t } from '../../../i18n/ui';
+import { render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getAllPublished();
+  return posts.map((post) => ({
+    params: { lang: langOf(post), slug: slugOf(post) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: Post };
+const lang = Astro.params.lang as Lang;
+const tr = t(lang);
+const { Content } = await render(post);
+const category = post.data.category as CategorySlug | undefined;
+---
+<BaseLayout title={post.data.title} description={post.data.description} lang={lang} type="article">
+  <article>
+    {category && <div class="post-meta"><CategoryBadge slug={category} lang={lang} /></div>}
+    <h1>{post.data.title}</h1>
+    <FormattedDate date={post.data.pubDate} lang={lang} />
+    {post.data.updatedDate && (
+      <span class="muted"> · {tr('post.updated')} <FormattedDate date={post.data.updatedDate} lang={lang} /></span>
+    )}
+    {post.data.tags.length > 0 && (
+      <div class="tags">
+        {post.data.tags.map((tag) => <a class="tag" href={`/${lang}/tags/${tag}/`}>#{tag}</a>)}
+      </div>
+    )}
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  <p style="margin-top:3rem"><a href={`/${lang}/`}>← {tr('post.readAll')}</a></p>
+</BaseLayout>

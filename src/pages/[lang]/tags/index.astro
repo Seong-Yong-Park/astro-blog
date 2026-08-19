@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { LANGS, type Lang } from '../../../consts';
+import { getTags } from '../../../lib/posts';
+import { t } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const tags = await getTags(lang);
+const tr = t(lang);
+---
+<BaseLayout title={tr('tags.title')} lang={lang}>
+  <h1>{tr('tags.title')}</h1>
+  {tags.length === 0 ? (
+    <p class="muted">{tr('empty')}</p>
+  ) : (
+    <div class="tags" style="margin-top:1.5rem">
+      {tags.map(({ tag, count }) => (
+        <a class="tag" href={`/${lang}/tags/${tag}/`}>#{tag} ({count})</a>
+      ))}
+    </div>
+  )}
+</BaseLayout>

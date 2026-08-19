@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { LANGS, type Lang } from '../../../consts';
+import { getPostsInCategory } from '../../../lib/posts';
+import { CATEGORY_SLUGS, CATEGORIES, type CategorySlug } from '../../../categories';
+import { t } from '../../../i18n/ui';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of LANGS) {
+    for (const category of CATEGORY_SLUGS) {
+      paths.push({
+        params: { lang, category },
+        props: { posts: await getPostsInCategory(lang, category) },
+      });
+    }
+  }
+  return paths;
+}
+
+const lang = Astro.params.lang as Lang;
+const category = Astro.params.category as CategorySlug;
+const { posts } = Astro.props;
+const meta = CATEGORIES[category];
+const tr = t(lang);
+---
+<BaseLayout title={meta.label} description={meta.question} lang={lang}>
+  <h1>{meta.label}</h1>
+  <p class="muted">{meta.question}</p>
+
+  {posts.length === 0 ? (
+    <p class="muted" style="margin-top:2rem">{tr('empty')}</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => <PostCard post={post} lang={lang} />)}
+    </ul>
+  )}
+</BaseLayout>

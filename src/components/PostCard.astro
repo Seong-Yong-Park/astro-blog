@@ -1,0 +1,30 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import CategoryBadge from './CategoryBadge.astro';
+import { slugOf, type Post } from '../lib/posts';
+import type { Lang } from '../consts';
+import type { CategorySlug } from '../categories';
+
+interface Props { post: Post; lang: Lang }
+const { post, lang } = Astro.props;
+const href = `/${lang}/posts/${slugOf(post)}/`;
+const category = post.data.category as CategorySlug | undefined;
+---
+<li>
+  <div class="post-meta">
+    {category && <CategoryBadge slug={category} lang={lang} />}
+    <FormattedDate date={post.data.pubDate} lang={lang} />
+  </div>
+  <h2>
+    <a href={href}>{post.data.title}</a>
+    {post.data.draft && <span class="draft-badge">draft</span>}
+  </h2>
+  <p>{post.data.description}</p>
+  {post.data.tags.length > 0 && (
+    <div class="tags">
+      {post.data.tags.map((tag) => (
+        <a class="tag" href={`/${lang}/tags/${tag}/`}>#{tag}</a>
+      ))}
+    </div>
+  )}
+</li>

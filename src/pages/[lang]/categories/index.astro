@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { LANGS, type Lang } from '../../../consts';
+import { getCategoryCounts } from '../../../lib/posts';
+import { CATEGORIES } from '../../../categories';
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const counts = await getCategoryCounts(lang);
+---
+<BaseLayout title="Categories" lang={lang}>
+  <h1>Categories</h1>
+  <p class="muted">Required → At risk → Prevented → Proven.</p>
+
+  <ul class="cat-list">
+    {counts.map(({ slug, count }) => (
+      <li>
+        <a class={`cat-row cat-row--${CATEGORIES[slug].color}`} href={`/${lang}/categories/${slug}/`}>
+          <span class="cat-row-label">{CATEGORIES[slug].label}</span>
+          <span class="cat-row-q">{CATEGORIES[slug].question}</span>
+          <span class="cat-row-count">{count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

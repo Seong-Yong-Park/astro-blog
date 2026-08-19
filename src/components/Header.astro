@@ -1,0 +1,30 @@
+---
+import { SITE } from '../consts';
+import type { Lang } from '../consts';
+import { t, otherLang, langLabel } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const other = otherLang(lang);
+---
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href={`/${lang}/`}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="5"  cy="12" r="2.8" fill="currentColor"/>
+        <circle cx="19" cy="6"  r="2.8" fill="currentColor"/>
+        <circle cx="19" cy="18" r="2.8" fill="currentColor"/>
+        <line x1="7.5" y1="10.8" x2="16.5" y2="7.2"  stroke="currentColor" stroke-width="1.5"/>
+        <line x1="7.5" y1="13.2" x2="16.5" y2="16.8" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span>{SITE.title}</span>
+    </a>
+    <nav>
+      <a href={`/${lang}/`}>{tr('nav.posts')}</a>
+      <a href={`/${lang}/categories/`}>{tr('nav.categories')}</a>
+      <a href={`/${lang}/tags/`}>{tr('nav.tags')}</a>
+      <a href={`/${other}/`}>{langLabel[other]}</a>
+    </nav>
+  </div>
+</header>
