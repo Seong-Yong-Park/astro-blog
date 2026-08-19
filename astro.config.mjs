@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   // ⬇⬇⬇ 도메인 사서 연결한 뒤 여기만 바꾸면 됩니다 ⬇⬇⬇
-  site: 'https://example.com',
+  site: 'https://safetynode.vercel.app',
 
   integrations: [mdx(), sitemap()],
 
